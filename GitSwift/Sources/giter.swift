@@ -31,25 +31,25 @@ public enum GitOperateType:NSInteger {
     public var description: String {
         switch self {
         case .branch:
-            return " branch "
+            return "branch"
         case .commit:
-            return " commit "
+            return "commit"
         case .tag:
-            return " tag "
+            return "tag"
         case .checkOut:
-            return " checkout "
+            return "checkout"
         case .push:
-            return " push "
+            return "push"
         case .pull:
-            return " pull "
+            return "pull"
         case .merge:
-            return " merge "
+            return "merge"
         case .add:
-            return " add ."
+            return "add"
         case .stashSave:
-            return " stash save "
+            return "stash save"
         case .stashPop:
-            return " stash pop "
+            return "stash pop"
         }
     }
 }
@@ -60,37 +60,58 @@ public class Giter {
     private var param:String
     required public init(operateType:GitOperateType,param:String) {
         self.operateType = operateType
-        if self.operateType.rawValue > 200 {
+        if self.operateType.rawValue >= 200 {
             self.param = ""
         }else{
             self.param = param
         }
     }
     
-    public func excute()->(String){
+    public func excute()->(){
         let git = Process()
         let outpipe = Pipe()
         git.standardOutput = outpipe
         let errpipe = Pipe()
         git.standardError = errpipe
         git.launchPath = "/usr/bin/git"
-        let argument:String = self.operateType.description.appending(self.param)
-        git.arguments = [argument]
+
+        var arguments:[String] = []
+        arguments.append(self.operateType.description)
+        if self.operateType == .add {
+            
+            arguments.append(".")
+            
+        }else if self.operateType == .commit {
+            if self.param.characters.count > 0 {
+                arguments.append("-m")
+                arguments.append(self.param)
+            }
+        }else{
+            if self.param.characters.count > 0 {
+                arguments.append(self.param)
+            }
+        }
+        git.arguments = arguments
         git.launch()
         
         let outdata = outpipe.fileHandleForReading.availableData
-        let outputString = String(data: outdata, encoding: String.Encoding.utf8) ?? ""
-        print("outputString: \(outputString)")
+        var outputString = String(data: outdata, encoding: String.Encoding.utf8) ?? ""
         
-        let errdata = errpipe.fileHandleForReading.availableData
-        let errString = String(data: errdata, encoding: String.Encoding.utf8) ?? ""
-        print("errString: \(errString)")
+        //let errdata = errpipe.fileHandleForReading.availableData
+        //let errString = String(data: errdata, encoding: String.Encoding.utf8) ?? ""
         
         git.waitUntilExit()
         
-        if errString.characters.count > 0 {
-            return errString
+        //if errString.characters.count > 0 {
+            //print("errString: \(errString)")
+            //return errString
+        //}
+        if outputString.characters.count > 0 {
+            print("result : \(outputString)")
+        }else{
+            outputString = "success"
+            print("result : \(outputString)")
         }
-        return outputString
+        //return outputString
     }
 }
