@@ -20,6 +20,7 @@ public enum GitOperateType:NSInteger {
     case commit
     case tag
     case checkOut
+    case checkOutTag
     case merge
     
     case add = 200
@@ -37,6 +38,8 @@ public enum GitOperateType:NSInteger {
         case .tag:
             return "tag"
         case .checkOut:
+            return "checkout"
+        case .checkOutTag:
             return "checkout"
         case .push:
             return "push"
@@ -81,6 +84,11 @@ public class Giter {
             
             arguments.append(".")
             
+        }else if self.operateType == .checkOutTag {
+            
+            arguments.append("-b")
+            arguments.append(self.param)
+
         }else if self.operateType == .commit {
             if self.param.characters.count > 0 {
                 arguments.append("-m")
