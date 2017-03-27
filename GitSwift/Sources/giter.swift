@@ -81,7 +81,7 @@ public class Giter {
                     parentGit = true
                 }
                 if parentGit {
-                    self.excuteGit();
+                    self.excuteGit(path);
                 }
                 
                 if path.isDirectory {
@@ -98,7 +98,8 @@ public class Giter {
                             bash.arguments = ["cd",path.string]
                             bash.launch()
                             bash.waitUntilExit()
-                            self.excuteGit();
+                            print("cd \(path.string)")
+                            self.excuteGit(path);
                         }
                     } catch {
                         
@@ -110,7 +111,7 @@ public class Giter {
         }
     }
     
-    private func excuteGit()->(){
+    private func excuteGit(_ path:Path)->(){
         
         let git = Process()
         let outpipe = Pipe()
@@ -157,20 +158,20 @@ public class Giter {
         let outdata = outpipe.fileHandleForReading.availableData
         var outputString = String(data: outdata, encoding: String.Encoding.utf8) ?? ""
         
-        //let errdata = errpipe.fileHandleForReading.availableData
-        //let errString = String(data: errdata, encoding: String.Encoding.utf8) ?? ""
+        let errdata = errpipe.fileHandleForReading.availableData
+        let errString = String(data: errdata, encoding: String.Encoding.utf8) ?? ""
         
         git.waitUntilExit()
         
-        //if errString.characters.count > 0 {
-            //print("errString: \(errString)")
-            //return errString
-        //}
         if outputString.characters.count > 0 {
-            print("result : \(outputString)")
+            print("\(path.lastComponent) result : \(outputString)")
         }else{
-            outputString = "success"
-            print("result : \(outputString)")
+            if errString.characters.count > 0 {
+                print("\(path.lastComponent) error : \(errString)")
+            }else{
+                outputString = "success"
+                print("\(path.lastComponent) result : \(outputString)")
+            }
         }
         //return outputString
     }
