@@ -74,35 +74,41 @@ public class Giter {
     public func excute() -> () {
         
         do {
+            var parentGit:Bool = false
             for path:Path in try Path.current.parent().children() {
-
-                var parentGit:Bool = false
                 if path.lastComponent == ".git"{
                     parentGit = true
                 }
-                if parentGit {
-                    self.excuteGit(path);
-                }
+            }
+            if parentGit {
                 
-                if path.isDirectory {
-                    var isGit:Bool = false
-                    do {
-                        for subPath in try path.children() {
-                            if subPath.lastComponent == ".git"{
-                                isGit = true
-                            }
-                        }
-                        if isGit {
-                            let bash = Process()
-                            bash.launchPath = "/usr/local/bin/bash"
-                            bash.arguments = ["cd",path.string]
-                            bash.launch()
-                            bash.waitUntilExit()
-                            print("cd \(path.string)")
-                            self.excuteGit(path);
-                        }
-                    } catch {
+                self.excuteGit(Path.current.parent());
+                
+            }else{
+
+                for path:Path in try Path.current.parent().children() {
+
+                    if path.isDirectory {
                         
+                        var isGit:Bool = false
+                        do {
+                            for subPath in try path.children() {
+                                if subPath.lastComponent == ".git"{
+                                    isGit = true
+                                }
+                            }
+                            if isGit {
+                                let bash = Process()
+                                bash.launchPath = "/usr/local/bin/bash"
+                                bash.arguments = ["cd",path.string]
+                                bash.launch()
+                                bash.waitUntilExit()
+                                print("cd \(path.string)")
+                                self.excuteGit(path);
+                            }
+                        } catch {
+                            
+                        }
                     }
                 }
             }
