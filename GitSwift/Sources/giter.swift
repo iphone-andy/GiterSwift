@@ -88,6 +88,7 @@ public class Giter {
             
             arguments.append("-b")
             arguments.append(self.param)
+            arguments.append(self.param)
 
         }else if self.operateType == .commit {
             if self.param.characters.count > 0 {
