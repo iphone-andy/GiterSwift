@@ -84,9 +84,6 @@ public class Giter {
                     self.excuteGit();
                 }
                 
-                
-                
-                
                 if path.isDirectory {
                     var isGit:Bool = false
                     do {
