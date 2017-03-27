@@ -51,9 +51,9 @@ public enum GitOperateType:NSInteger {
         case .add:
             return "add"
         case .stashSave:
-            return "stash save"
+            return "stash"
         case .stashPop:
-            return "stash pop"
+            return "stash"
         }
     }
 }
@@ -83,6 +83,9 @@ public class Giter {
                 if parentGit {
                     self.excuteGit();
                 }
+                
+                
+                
                 
                 if path.isDirectory {
                     var isGit:Bool = false
@@ -132,10 +135,20 @@ public class Giter {
             arguments.append(self.param)
 
         }else if self.operateType == .commit {
+            
             if self.param.characters.count > 0 {
                 arguments.append("-m")
                 arguments.append(self.param)
             }
+            
+        }else if self.operateType == .stashSave {
+            
+            arguments.append("save")
+
+        }else if self.operateType == .stashPop {
+
+            arguments.append("pop")
+            
         }else{
             if self.param.characters.count > 0 {
                 arguments.append(self.param)
