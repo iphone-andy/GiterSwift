@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import PathKit
 #if os(OSX)
     import Darwin
 #elseif os(Linux)
@@ -70,7 +71,47 @@ public class Giter {
         }
     }
     
-    public func excute()->(){
+    public func excute() -> () {
+        
+        do {
+            for path:Path in try Path.current.parent().children() {
+
+                var parentGit:Bool = false
+                if path.lastComponent == ".git"{
+                    parentGit = true
+                }
+                if parentGit {
+                    self.excuteGit();
+                }
+                
+                if path.isDirectory {
+                    var isGit:Bool = false
+                    do {
+                        for subPath in try path.children() {
+                            if subPath.lastComponent == ".git"{
+                                isGit = true
+                            }
+                        }
+                        if isGit {
+                            let bash = Process()
+                            bash.launchPath = "/usr/local/bin/bash"
+                            bash.arguments = ["cd",path.string]
+                            bash.launch()
+                            bash.waitUntilExit()
+                            self.excuteGit();
+                        }
+                    } catch {
+                        
+                    }
+                }
+            }
+        } catch {
+            
+        }
+    }
+    
+    private func excuteGit()->(){
+        
         let git = Process()
         let outpipe = Pipe()
         git.standardOutput = outpipe
@@ -87,7 +128,7 @@ public class Giter {
         }else if self.operateType == .checkOutTag {
             
             arguments.append("-b")
-            arguments.append("tag_" + self.param)
+            arguments.append("tag_\(self.param)")
             arguments.append(self.param)
 
         }else if self.operateType == .commit {
