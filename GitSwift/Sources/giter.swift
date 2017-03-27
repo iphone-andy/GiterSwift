@@ -98,12 +98,6 @@ public class Giter {
                                 }
                             }
                             if isGit {
-                                let bash = Process()
-                                bash.launchPath = "/usr/local/bin/bash"
-                                bash.arguments = ["cd",path.string]
-                                bash.launch()
-                                bash.waitUntilExit()
-                                print("cd \(path.string)")
                                 self.excuteGit(path);
                             }
                         } catch {
@@ -120,11 +114,24 @@ public class Giter {
     private func excuteGit(_ path:Path)->(){
         
         let git = Process()
+        var gitPath = path
+        if gitPath.string.characters.count == 0 {
+            /*
+            bash.launchPath = "/usr/local/bin/bash"
+            bash.arguments = ["cd",path.string]
+            bash.launch()
+            bash.waitUntilExit()
+            print("cd \(path.string)")
+            */
+            gitPath = Path.current
+        }
+        
         let outpipe = Pipe()
         git.standardOutput = outpipe
         let errpipe = Pipe()
         git.standardError = errpipe
         git.launchPath = "/usr/bin/git"
+        git.currentDirectoryPath = gitPath.string
 
         var arguments:[String] = []
         arguments.append(self.operateType.description)
@@ -173,7 +180,7 @@ public class Giter {
             print("\(path.lastComponent) result : \(outputString)")
         }else{
             if errString.characters.count > 0 {
-                print("\(path.lastComponent) error : \(errString)")
+                print("\(path.lastComponent) result : \(errString)")
             }else{
                 outputString = "success"
                 print("\(path.lastComponent) result : \(outputString)")
