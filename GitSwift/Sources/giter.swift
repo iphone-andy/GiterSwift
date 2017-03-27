@@ -87,7 +87,7 @@ public class Giter {
         }else if self.operateType == .checkOutTag {
             
             arguments.append("-b")
-            arguments.append(self.param)
+            arguments.append("tag_" + self.param)
             arguments.append(self.param)
 
         }else if self.operateType == .commit {
