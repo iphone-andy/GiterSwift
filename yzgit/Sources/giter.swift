@@ -143,6 +143,15 @@ public class Giter {
             
             arguments.append(".")
             
+        }else if self.operateType == .branch {
+
+            let params:[String] = self.param.components(separatedBy: " ").filter({ (string:String) -> Bool in
+                return string.characters.count > 0
+            })
+            if params.count > 0 {
+                arguments.append(contentsOf: params)
+            }
+            
         }else if self.operateType == .checkOutTag {
             
             arguments.append("-b")
