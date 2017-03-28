@@ -20,16 +20,15 @@ let merge = StringOption(longFlag: "merge",helpMessage: "合并代码")
 let stash_save = BoolOption(longFlag: "stash-save",helpMessage: "缓存变更")
 let stash_pop = BoolOption(longFlag: "stash-pop",helpMessage: "恢复缓存变更")
 
-//TODO:
-let prune = BoolOption(longFlag: "prune",helpMessage: "清除远程仓库已经不存在的分支")
-let checkout_tag = StringOption(longFlag: "co-tag",helpMessage: "从指定tag拉出分支并切换到该分支")//longFlag: "checkout"
-let help = StringOption(longFlag: "help",helpMessage: "查看帮助")//longFlag: "checkout"
+let prune = BoolOption(longFlag: "prune",helpMessage: "清除远程仓库已经不存在的分支")//git remote prune origin
+let checkout_tag = StringOption(longFlag: "co-tag",helpMessage: "从指定tag拉出分支并切换到该分支")
+let help = StringOption(longFlag: "help",helpMessage: "查看帮助")
 
 //TODO:
 // git tag -l | xargs git tag -d
 //git fetch  - - tags  清除本地tag，并拉取远程tag
 
-cli.addOptions(add,branch,tag,checkout,checkout_tag,commit,push,pull,merge,stash_save,stash_pop)
+cli.addOptions(add,branch,tag,checkout,checkout_tag,commit,push,pull,merge,stash_save,stash_pop,prune)
 
 cli.formatOutput = { s, type in
     var str: String
@@ -122,6 +121,11 @@ if add.wasSet{
     let stash_popGiter:Giter = Giter.init(operateType: .stashPop, param: String(stash_pop.value))
     stash_popGiter.excute()
     
+}else if prune.wasSet{
+    
+    let pruneGiter:Giter = Giter.init(operateType: .prune, param: String(prune.value))
+    pruneGiter.excute()
+
 }else{
     
     print(cli.printUsage())

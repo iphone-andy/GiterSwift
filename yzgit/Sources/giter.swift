@@ -29,6 +29,8 @@ public enum GitOperateType:NSInteger {
     case pull
     case stashSave
     case stashPop
+    case prune
+
     
     public var description: String {
         switch self {
@@ -54,6 +56,8 @@ public enum GitOperateType:NSInteger {
             return "stash"
         case .stashPop:
             return "stash"
+        case .prune:
+            return "prune"
         }
     }
 }
@@ -160,6 +164,11 @@ public class Giter {
 
             arguments.append("pop")
             
+        }else if self.operateType == .prune {
+            
+            arguments.insert("remote", at: 0)
+            arguments.append("origin")
+
         }else{
             if self.param.characters.count > 0 {
                 arguments.append(self.param)
